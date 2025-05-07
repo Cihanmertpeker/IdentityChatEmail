@@ -11,5 +11,8 @@ namespace IdentityChatEmail.Context
             optionsBuilder.UseSqlServer("Server=CIHAN\\MSSQLSERVER01; initial Catalog= EmailChatDb; integrated security=true;trust server certificate=true");
 
         }
+
+        public DbSet<Message> Messages { get; set; }
+
     }
 }
