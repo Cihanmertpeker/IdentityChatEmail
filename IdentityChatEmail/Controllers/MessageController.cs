@@ -24,14 +24,17 @@ namespace IdentityChatEmail.Controllers
             ViewBag.email = values.Email;
             ViewBag.nameSurname = values.Name + " " + values.Surname;
 
-            var values2 = _context.Messages.Where(x=>x.ReceiverEmail==values.Email).ToList();
+            var values2 = _context.Messages.Where(x => x.ReceiverEmail == values.Email).ToList();
 
             return View(values2);
         }
 
-        public IActionResult Sendbox()
+        public async Task<IActionResult> Sendbox()
         {
-            return View();
+            var values = await _userManager.FindByNameAsync(User.Identity.Name);
+            string emailValue = values.Email;
+            var sendMessageList = _context.Messages.Where(x => x.SenderEmail == emailValue).ToList();
+            return View(sendMessageList);
         }
 
         public IActionResult CreateMessage()
@@ -40,8 +43,12 @@ namespace IdentityChatEmail.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateMessage(Message message)
+        public async Task<IActionResult> CreateMessage(Message message)
         {
+            var values = await _userManager.FindByNameAsync(User.Identity.Name);
+            string senderEmail = values.Email;
+
+            message.SenderEmail= senderEmail;
             message.IsRead = false;
             _context.Messages.Add(message);
             _context.SaveChanges();

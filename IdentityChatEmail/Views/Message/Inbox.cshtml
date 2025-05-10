@@ -2,10 +2,10 @@
 @model List<Message>
 
 @{
-    Layout = null;
+    Layout = "~/Views/Shared/_MessageLayout.cshtml";
 }
 
 @foreach(var item in Model)
 {
-    <p>@item.SenderEmail - @item.Subject - <a href="/Message/MessageDetail/@item.MessageId" class="btn btn-warning">Mesajı Aç</a>"</p>
+    <p>@item.SenderEmail - @item.Subject - <a href="/Message/MessageDetail/@item.MessageId" class="btn btn-warning">Mesajı Aç</a></p>
 }
