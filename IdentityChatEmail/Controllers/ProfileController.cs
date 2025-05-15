@@ -23,8 +23,34 @@ namespace IdentityChatEmail.Controllers
             ViewBag.surname = values.Surname;
             ViewBag.email = values.Email;
             ViewBag.phone = values.PhoneNumber;
+            ViewBag.RecipientEmailAddressCount = _context.Messages
+                                  .Where(x => x.ReceiverEmail == values.Email)
+                                  .Count();
 
-            return View();
+            ViewBag.SenderEmailAddressCount = _context.Messages
+                                                 .Where(x => x.SenderEmail == values.Email)
+                                                 .Count();
+
+            return View(values);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> ProfileUpdate( AppUser updatedUser)
+        {
+            var user = await _userManager.FindByNameAsync(User.Identity.Name);
+            user.Name = updatedUser.Name;
+            user.Surname = updatedUser.Surname;
+            user.PhoneNumber = updatedUser.PhoneNumber;
+            user.ProfileImageUrl = updatedUser.ProfileImageUrl;
+            user.Email = updatedUser.Email;
+            user.PasswordHash = updatedUser.PasswordHash;
+
+             await _userManager.UpdateAsync(user);
+            _context.SaveChanges();
+
+            return RedirectToAction("ProfileDetail");
+
+        }
+
     }
 }
