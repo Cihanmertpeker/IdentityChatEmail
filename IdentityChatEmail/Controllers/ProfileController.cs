@@ -43,7 +43,6 @@ namespace IdentityChatEmail.Controllers
             user.PhoneNumber = updatedUser.PhoneNumber;
             user.ProfileImageUrl = updatedUser.ProfileImageUrl;
             user.Email = updatedUser.Email;
-            user.PasswordHash = updatedUser.PasswordHash;
 
              await _userManager.UpdateAsync(user);
             _context.SaveChanges();

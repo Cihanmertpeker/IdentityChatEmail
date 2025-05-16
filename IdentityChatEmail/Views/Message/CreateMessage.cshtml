@@ -8,23 +8,44 @@
 
 <h2>Yeni Mesaj Oluşturma Sayfası</h2>
 
-<div class="conteiner">
-    <br />
-    <br />
+<div class="email-right-box">
 
-    <form method="post">
-        
-        <label>Alıcı Email</label>
-        <input type="text" asp-for="ReceiverEmail" class="form-control" />
-        <br>
-        <label>Konu</label>
-        <input type="text" asp-for="Subject" class="form-control" />
-        <br>
-        <label>Mesaj Detayları</label>
-        <input type="text" asp-for="MessageDetail" class="form-control" />
-        <br>
-        <button class="btn btn-primary">Mesajı Gönder</button>
+
+    <form method="post" onsubmit="sendAlert()">
+        <div class="compose-content mt-5">
+
+            <div class="form-group">
+                <input type="text" asp-for="ReceiverEmail" class="form-control bg-transparent" placeholder="  Mail Adresi">
+            </div>
+
+          @*   <div class="form-group">
+                <input type="text" asp-for="" class="form-control bg-transparent" placeholder="  Adı Soyadı">
+            </div> *@
+
+            <div class="form-group">
+                <input type="text" asp-for="Subject" class="form-control bg-transparent" placeholder=" Konu">
+            </div>
+            <div class="form-group">
+                <textarea class="textarea_editor form-control bg-light" asp-for="MessageDetail" rows="15" placeholder="Mesaj Detayı"></textarea>
+            </div>
+            <button class="btn btn-outline-success" type="submit">Gönder</button>
+        </div>
+
     </form>
-
 </div>
 
+
+<script>
+    function sendAlert() {
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: "Mesajınız başarıyla gönderildi",
+        showConfirmButton: false,
+        timer:1500
+      });
+    }
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

@@ -3,6 +3,7 @@ using IdentityChatEmail.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 
 namespace IdentityChatEmail.Controllers
 {
@@ -18,13 +19,20 @@ namespace IdentityChatEmail.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> Inbox()
+        public async Task<IActionResult> Inbox(string search)
         {
-            var values = await _userManager.FindByNameAsync(User.Identity.Name);
-            ViewBag.email = values.Email;
-            ViewBag.nameSurname = values.Name + " " + values.Surname;
+            var appUser = await _userManager.FindByNameAsync(User.Identity.Name);
+            ViewBag.email = appUser.Email;
+            ViewBag.nameSurname = appUser.Name + " " + appUser.Surname;
+            ViewBag.Search = search;
 
-            var values2 = _context.Messages.Where(x => x.ReceiverEmail == values.Email).ToList();
+            var values2 = _context.Messages.Where(x => x.ReceiverEmail == appUser.Email && x.IsRead == false).ToList();
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                values2 = values2.Where(x=>x.Subject.ToLower().Contains(search.ToLower())).ToList();
+                return View("MessageDetail"+search);
+            }
 
             return View(values2);
         }
@@ -54,5 +62,36 @@ namespace IdentityChatEmail.Controllers
             _context.SaveChanges();
             return RedirectToAction("Sendbox");
         }
+
+        public async Task<IActionResult> MessageDetail(int id)
+        {
+            var values = await _userManager.FindByNameAsync(User.Identity.Name);
+            ViewBag.senderImage = values.ProfileImageUrl;
+            var value = _context.Messages.FirstOrDefault(x => x.MessageId == id);
+            return View(value);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangeMessageStatus(List<int> MessageId)
+        {
+            foreach (var id in MessageId)
+            {
+                var value = await _context.Messages.FindAsync(id);
+                if (value.IsRead != null || value.IsRead == false)
+                {
+                    value.IsRead = true;
+
+                }
+            }
+            await _context.SaveChangesAsync();
+            return RedirectToAction("TrashBox");
+        }
+
+        public IActionResult TrashBox()
+        {
+            var deletedValues = _context.Messages.Where(x => x.IsRead == true).ToList();
+            return View(deletedValues);
+        }
+
     }
 }
