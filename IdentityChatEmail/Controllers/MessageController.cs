@@ -26,12 +26,11 @@ namespace IdentityChatEmail.Controllers
             ViewBag.nameSurname = appUser.Name + " " + appUser.Surname;
             ViewBag.Search = search;
 
-            var values2 = _context.Messages.Where(x => x.ReceiverEmail == appUser.Email && x.IsRead == false).ToList();
+            var values2 = _context.Messages.Where(x => x.SenderEmail == appUser.Email && x.IsRead == false).ToList();
 
             if (!string.IsNullOrWhiteSpace(search))
             {
                 values2 = values2.Where(x=>x.Subject.ToLower().Contains(search.ToLower())).ToList();
-                return View("MessageDetail"+search);
             }
 
             return View(values2);
